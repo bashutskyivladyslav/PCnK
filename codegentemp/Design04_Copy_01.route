@@ -1,0 +1,25 @@
+net ClockBlock_HFClk
+	term   ":m0s8clockblockcell.hfclk"
+	switch ":m0s8clockblockcell.hfclk==>:interrupt_16.clock"
+	term   ":interrupt_16.clock"
+	switch ":m0s8clockblockcell.hfclk==>:interrupt_0.clock"
+	term   ":interrupt_0.clock"
+end ClockBlock_HFClk
+net Net_17
+	term   ":m0s8tcpwmcell_0.interrupt"
+	switch ":m0s8tcpwmcell_0.interrupt==>:interrupt_idmux_16.in_0"
+	switch ":interrupt_idmux_16.interrupt_idmux_16__out==>:interrupt_16.interrupt"
+	term   ":interrupt_16.interrupt"
+end Net_17
+net Net_23
+	term   ":ioport0:pin7.fb"
+	switch ":ioport0:pin7.fb==>:ioport0:hsiom_in7.hsiom7_in"
+	switch ":ioport0:hsiom_in7.dsi==>Stub-:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v13+:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v15"
+	switch "OStub-:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v13+:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v15"
+	switch ":dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:13,56"
+	switch ":dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:109,56_f"
+	switch "IStub-:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v105+:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v107+:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v109"
+	switch "Stub-:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v105+:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v107+:dsiswitch_bottom@[DSI=(1,1)][side=bottom]:dsihc_bottom:v109==>:interrupt_idmux_0.in_1"
+	switch ":interrupt_idmux_0.interrupt_idmux_0__out==>:interrupt_0.interrupt"
+	term   ":interrupt_0.interrupt"
+end Net_23

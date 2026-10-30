@@ -1,0 +1,26 @@
+(DELAYFILE
+ (SDFVERSION "IEEE 1497 4.0")
+ (DATE "2026-10-29T11:26:09Z")
+ (DESIGN "Design04_Copy_01")
+ (VENDOR "Cypress Semiconductor")
+ (PROGRAM "PSoC Creator")
+ (VERSION " 4.4")
+ (DIVIDER .)
+ (TIMESCALE 1 ns)
+ (CELL
+  (CELLTYPE "Design04_Copy_01")
+  (INSTANCE *)
+  (DELAY
+   (ABSOLUTE
+    (INTERCONNECT ClockBlock.hfclk isr_Timer.clock (0.000:0.000:0.000))
+    (INTERCONNECT ClockBlock.hfclk isr_Button.clock (0.000:0.000:0.000))
+    (INTERCONNECT \\Timer_1\:cy_m0s8_tcpwm_1\\.interrupt isr_Timer.interrupt (1.000:1.000:1.000))
+    (INTERCONNECT Button\(0\).fb isr_Button.interrupt (1.000:1.000:1.000))
+    (INTERCONNECT ClockBlock.ff_div_8 \\Timer_1\:cy_m0s8_tcpwm_1\\.clock (0.000:0.000:0.000))
+    (INTERCONNECT Pin_Main\(0\)_PAD Pin_Main\(0\).pad_in (0.000:0.000:0.000))
+    (INTERCONNECT Pin_ISR\(0\)_PAD Pin_ISR\(0\).pad_in (0.000:0.000:0.000))
+    (INTERCONNECT Button\(0\)_PAD Button\(0\).pad_in (0.000:0.000:0.000))
+   )
+  )
+ )
+)
