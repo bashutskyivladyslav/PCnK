@@ -1,0 +1,1029 @@
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Timer_ISR_Handler,"ax",%progbits
+  20              		.align	2
+  21              		.global	Timer_ISR_Handler
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	Timer_ISR_Handler, %function
+  25              	Timer_ISR_Handler:
+  26              	.LFB32:
+  27              		.file 1 "main.c"
+   1:main.c        **** #include "project.h"
+   2:main.c        **** 
+   3:main.c        **** /* Варіант 6: Clock_1 = 1 МГц (тік 1 мкс), період переривання 5 м
+   4:main.c        **** #define TIMER_PERIOD_TICKS (5000u) 
+   5:main.c        **** 
+   6:main.c        **** volatile uint32_t isr_timer_count = 0u;
+   7:main.c        **** 
+   8:main.c        **** /* --- Обробник переривання таймера (Timer_1) --- */
+   9:main.c        **** CY_ISR(Timer_ISR_Handler)
+  10:main.c        **** {
+  28              		.loc 1 10 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  11:main.c        ****     /* Інверсія стану Pin_ISR для вимірювання на Saleae Logic */
+  12:main.c        ****     Pin_ISR_Write((uint8)(!Pin_ISR_Read()));
+  36              		.loc 1 12 0
+  37 0002 FFF7FEFF 		bl	Pin_ISR_Read
+  38              	.LVL0:
+  39 0006 4342     		rsbs	r3, r0, #0
+  40 0008 5841     		adcs	r0, r0, r3
+  41 000a C0B2     		uxtb	r0, r0
+  42 000c FFF7FEFF 		bl	Pin_ISR_Write
+  43              	.LVL1:
+  13:main.c        ****     
+  14:main.c        ****     isr_timer_count++;
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 2
+
+
+  44              		.loc 1 14 0
+  45 0010 034A     		ldr	r2, .L2
+  46 0012 1368     		ldr	r3, [r2]
+  47 0014 0133     		adds	r3, r3, #1
+  48 0016 1360     		str	r3, [r2]
+  15:main.c        ****     
+  16:main.c        ****     /* Скидання прапорця переривання таймера */
+  17:main.c        ****     Timer_1_ClearInterrupt(Timer_1_INTR_MASK_TC);
+  49              		.loc 1 17 0
+  50 0018 0120     		movs	r0, #1
+  51 001a FFF7FEFF 		bl	Timer_1_ClearInterrupt
+  52              	.LVL2:
+  18:main.c        **** }
+  53              		.loc 1 18 0
+  54              		@ sp needed
+  55 001e 10BD     		pop	{r4, pc}
+  56              	.L3:
+  57              		.align	2
+  58              	.L2:
+  59 0020 00000000 		.word	.LANCHOR0
+  60              		.cfi_endproc
+  61              	.LFE32:
+  62              		.size	Timer_ISR_Handler, .-Timer_ISR_Handler
+  63              		.section	.text.Button_Main_Handler,"ax",%progbits
+  64              		.align	2
+  65              		.global	Button_Main_Handler
+  66              		.code	16
+  67              		.thumb_func
+  68              		.type	Button_Main_Handler, %function
+  69              	Button_Main_Handler:
+  70              	.LFB33:
+  19:main.c        **** 
+  20:main.c        **** /* --- Обробник переривання від кнопки (компонент назван
+  21:main.c        **** CY_ISR(Button_Main_Handler)
+  22:main.c        **** {
+  71              		.loc 1 22 0
+  72              		.cfi_startproc
+  73              		@ args = 0, pretend = 0, frame = 0
+  74              		@ frame_needed = 0, uses_anonymous_args = 0
+  75 0000 10B5     		push	{r4, lr}
+  76              		.cfi_def_cfa_offset 8
+  77              		.cfi_offset 4, -8
+  78              		.cfi_offset 14, -4
+  23:main.c        ****     /* Зчитуємо поточний стан світлодіода, інвертуємо йо
+  24:main.c        ****        Це забезпечує поведінку: натиснув — увімкнулося, �
+  25:main.c        ****     uint8 current_state = Pin_Main_Read();
+  79              		.loc 1 25 0
+  80 0002 FFF7FEFF 		bl	Pin_Main_Read
+  81              	.LVL3:
+  26:main.c        ****     Pin_Main_Write((uint8)(!current_state));
+  82              		.loc 1 26 0
+  83 0006 4342     		rsbs	r3, r0, #0
+  84 0008 5841     		adcs	r0, r0, r3
+  85              	.LVL4:
+  86 000a C0B2     		uxtb	r0, r0
+  87 000c FFF7FEFF 		bl	Pin_Main_Write
+  88              	.LVL5:
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 3
+
+
+  27:main.c        ****     
+  28:main.c        ****     /* Скидання прапорця переривання на компоненті Button */
+  29:main.c        ****     Button_ClearInterrupt();
+  89              		.loc 1 29 0
+  90 0010 FFF7FEFF 		bl	Button_ClearInterrupt
+  91              	.LVL6:
+  30:main.c        **** }
+  92              		.loc 1 30 0
+  93              		@ sp needed
+  94 0014 10BD     		pop	{r4, pc}
+  95              		.cfi_endproc
+  96              	.LFE33:
+  97              		.size	Button_Main_Handler, .-Button_Main_Handler
+  98 0016 C046     		.section	.text.main,"ax",%progbits
+  99              		.align	2
+ 100              		.global	main
+ 101              		.code	16
+ 102              		.thumb_func
+ 103              		.type	main, %function
+ 104              	main:
+ 105              	.LFB34:
+  31:main.c        **** 
+  32:main.c        **** int main(void)
+  33:main.c        **** {
+ 106              		.loc 1 33 0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 0
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110 0000 10B5     		push	{r4, lr}
+ 111              		.cfi_def_cfa_offset 8
+ 112              		.cfi_offset 4, -8
+ 113              		.cfi_offset 14, -4
+  34:main.c        ****     CyGlobalIntEnable; /* Дозволити глобальні переривання */
+ 114              		.loc 1 34 0
+ 115              		.syntax divided
+ 116              	@ 34 "main.c" 1
+ 117 0002 62B6     		CPSIE   i
+ 118              	@ 0 "" 2
+  35:main.c        **** 
+  36:main.c        ****     /* Ініціалізація та запуск таймера і його тактування
+  37:main.c        ****     Clock_1_Start();
+ 119              		.loc 1 37 0
+ 120              		.thumb
+ 121              		.syntax unified
+ 122 0004 FFF7FEFF 		bl	Clock_1_Start
+ 123              	.LVL7:
+  38:main.c        ****     Timer_1_Start();
+ 124              		.loc 1 38 0
+ 125 0008 FFF7FEFF 		bl	Timer_1_Start
+ 126              	.LVL8:
+  39:main.c        ****     Timer_1_WritePeriod(TIMER_PERIOD_TICKS);
+ 127              		.loc 1 39 0
+ 128 000c 0648     		ldr	r0, .L6
+ 129 000e FFF7FEFF 		bl	Timer_1_WritePeriod
+ 130              	.LVL9:
+  40:main.c        ****     Timer_1_SetInterruptMode(Timer_1_INTR_MASK_TC);
+ 131              		.loc 1 40 0
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 4
+
+
+ 132 0012 0120     		movs	r0, #1
+ 133 0014 FFF7FEFF 		bl	Timer_1_SetInterruptMode
+ 134              	.LVL10:
+  41:main.c        ****     
+  42:main.c        ****     /* Реєстрація та запуск обробників переривань */
+  43:main.c        ****     isr_Timer_StartEx(Timer_ISR_Handler);
+ 135              		.loc 1 43 0
+ 136 0018 0448     		ldr	r0, .L6+4
+ 137 001a FFF7FEFF 		bl	isr_Timer_StartEx
+ 138              	.LVL11:
+  44:main.c        ****     isr_Button_StartEx(Button_Main_Handler);
+ 139              		.loc 1 44 0
+ 140 001e 0448     		ldr	r0, .L6+8
+ 141 0020 FFF7FEFF 		bl	isr_Button_StartEx
+ 142              	.LVL12:
+  45:main.c        **** 
+  46:main.c        **** //    for(;;)
+  47:main.c        **** //    {
+  48:main.c        **** //        Pin_Main_Write(1u);
+  49:main.c        **** //        CyDelay(800);
+  50:main.c        **** //        Pin_Main_Write(0u);
+  51:main.c        **** //        CyDelay(800);
+  52:main.c        **** //    }
+  53:main.c        **** }...
+ 143              		.loc 1 53 0
+ 144 0024 0020     		movs	r0, #0
+ 145              		@ sp needed
+ 146 0026 10BD     		pop	{r4, pc}
+ 147              	.L7:
+ 148              		.align	2
+ 149              	.L6:
+ 150 0028 88130000 		.word	5000
+ 151 002c 00000000 		.word	Timer_ISR_Handler
+ 152 0030 00000000 		.word	Button_Main_Handler
+ 153              		.cfi_endproc
+ 154              	.LFE34:
+ 155              		.size	main, .-main
+ 156              		.global	isr_timer_count
+ 157              		.bss
+ 158              		.align	2
+ 159              		.set	.LANCHOR0,. + 0
+ 160              		.type	isr_timer_count, %object
+ 161              		.size	isr_timer_count, 4
+ 162              	isr_timer_count:
+ 163 0000 00000000 		.space	4
+ 164              		.text
+ 165              	.Letext0:
+ 166              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 167              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 168              		.file 4 "Generated_Source\\PSoC4/cytypes.h"
+ 169              		.file 5 "Generated_Source\\PSoC4/Pin_ISR.h"
+ 170              		.file 6 "Generated_Source\\PSoC4/Timer_1.h"
+ 171              		.file 7 "Generated_Source\\PSoC4/Pin_Main.h"
+ 172              		.file 8 "Generated_Source\\PSoC4/Button.h"
+ 173              		.file 9 "Generated_Source\\PSoC4/Clock_1.h"
+ 174              		.file 10 "Generated_Source\\PSoC4/isr_Timer.h"
+ 175              		.file 11 "Generated_Source\\PSoC4/isr_Button.h"
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 5
+
+
+ 176              		.section	.debug_info,"",%progbits
+ 177              	.Ldebug_info0:
+ 178 0000 4C020000 		.4byte	0x24c
+ 179 0004 0400     		.2byte	0x4
+ 180 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 181 000a 04       		.byte	0x4
+ 182 000b 01       		.uleb128 0x1
+ 183 000c 4F010000 		.4byte	.LASF32
+ 184 0010 0C       		.byte	0xc
+ 185 0011 43020000 		.4byte	.LASF33
+ 186 0015 F4010000 		.4byte	.LASF34
+ 187 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 188 001d 00000000 		.4byte	0
+ 189 0021 00000000 		.4byte	.Ldebug_line0
+ 190 0025 02       		.uleb128 0x2
+ 191 0026 01       		.byte	0x1
+ 192 0027 06       		.byte	0x6
+ 193 0028 92020000 		.4byte	.LASF0
+ 194 002c 02       		.uleb128 0x2
+ 195 002d 01       		.byte	0x1
+ 196 002e 08       		.byte	0x8
+ 197 002f 87000000 		.4byte	.LASF1
+ 198 0033 02       		.uleb128 0x2
+ 199 0034 02       		.byte	0x2
+ 200 0035 05       		.byte	0x5
+ 201 0036 4F020000 		.4byte	.LASF2
+ 202 003a 02       		.uleb128 0x2
+ 203 003b 02       		.byte	0x2
+ 204 003c 07       		.byte	0x7
+ 205 003d 23000000 		.4byte	.LASF3
+ 206 0041 02       		.uleb128 0x2
+ 207 0042 04       		.byte	0x4
+ 208 0043 05       		.byte	0x5
+ 209 0044 7D020000 		.4byte	.LASF4
+ 210 0048 03       		.uleb128 0x3
+ 211 0049 D6000000 		.4byte	.LASF9
+ 212 004d 02       		.byte	0x2
+ 213 004e 41       		.byte	0x41
+ 214 004f 53000000 		.4byte	0x53
+ 215 0053 02       		.uleb128 0x2
+ 216 0054 04       		.byte	0x4
+ 217 0055 07       		.byte	0x7
+ 218 0056 A3000000 		.4byte	.LASF5
+ 219 005a 02       		.uleb128 0x2
+ 220 005b 08       		.byte	0x8
+ 221 005c 05       		.byte	0x5
+ 222 005d 35020000 		.4byte	.LASF6
+ 223 0061 02       		.uleb128 0x2
+ 224 0062 08       		.byte	0x8
+ 225 0063 07       		.byte	0x7
+ 226 0064 70000000 		.4byte	.LASF7
+ 227 0068 04       		.uleb128 0x4
+ 228 0069 04       		.byte	0x4
+ 229 006a 05       		.byte	0x5
+ 230 006b 696E7400 		.ascii	"int\000"
+ 231 006f 02       		.uleb128 0x2
+ 232 0070 04       		.byte	0x4
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 6
+
+
+ 233 0071 07       		.byte	0x7
+ 234 0072 36000000 		.4byte	.LASF8
+ 235 0076 03       		.uleb128 0x3
+ 236 0077 74020000 		.4byte	.LASF10
+ 237 007b 03       		.byte	0x3
+ 238 007c 30       		.byte	0x30
+ 239 007d 48000000 		.4byte	0x48
+ 240 0081 05       		.uleb128 0x5
+ 241 0082 C9000000 		.4byte	.LASF11
+ 242 0086 04       		.byte	0x4
+ 243 0087 FB01     		.2byte	0x1fb
+ 244 0089 2C000000 		.4byte	0x2c
+ 245 008d 05       		.uleb128 0x5
+ 246 008e FA000000 		.4byte	.LASF12
+ 247 0092 04       		.byte	0x4
+ 248 0093 FD01     		.2byte	0x1fd
+ 249 0095 53000000 		.4byte	0x53
+ 250 0099 02       		.uleb128 0x2
+ 251 009a 04       		.byte	0x4
+ 252 009b 04       		.byte	0x4
+ 253 009c 6A000000 		.4byte	.LASF13
+ 254 00a0 02       		.uleb128 0x2
+ 255 00a1 08       		.byte	0x8
+ 256 00a2 04       		.byte	0x4
+ 257 00a3 CF000000 		.4byte	.LASF14
+ 258 00a7 02       		.uleb128 0x2
+ 259 00a8 01       		.byte	0x1
+ 260 00a9 08       		.byte	0x8
+ 261 00aa 4A020000 		.4byte	.LASF15
+ 262 00ae 02       		.uleb128 0x2
+ 263 00af 08       		.byte	0x8
+ 264 00b0 04       		.byte	0x4
+ 265 00b1 86020000 		.4byte	.LASF16
+ 266 00b5 02       		.uleb128 0x2
+ 267 00b6 04       		.byte	0x4
+ 268 00b7 07       		.byte	0x7
+ 269 00b8 EB010000 		.4byte	.LASF17
+ 270 00bc 06       		.uleb128 0x6
+ 271 00bd 76000000 		.4byte	0x76
+ 272 00c1 07       		.uleb128 0x7
+ 273 00c2 AC020000 		.4byte	.LASF18
+ 274 00c6 01       		.byte	0x1
+ 275 00c7 09       		.byte	0x9
+ 276 00c8 00000000 		.4byte	.LFB32
+ 277 00cc 24000000 		.4byte	.LFE32-.LFB32
+ 278 00d0 01       		.uleb128 0x1
+ 279 00d1 9C       		.byte	0x9c
+ 280 00d2 F8000000 		.4byte	0xf8
+ 281 00d6 08       		.uleb128 0x8
+ 282 00d7 06000000 		.4byte	.LVL0
+ 283 00db C7010000 		.4byte	0x1c7
+ 284 00df 08       		.uleb128 0x8
+ 285 00e0 10000000 		.4byte	.LVL1
+ 286 00e4 D2010000 		.4byte	0x1d2
+ 287 00e8 09       		.uleb128 0x9
+ 288 00e9 1E000000 		.4byte	.LVL2
+ 289 00ed DD010000 		.4byte	0x1dd
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 7
+
+
+ 290 00f1 0A       		.uleb128 0xa
+ 291 00f2 01       		.uleb128 0x1
+ 292 00f3 50       		.byte	0x50
+ 293 00f4 01       		.uleb128 0x1
+ 294 00f5 31       		.byte	0x31
+ 295 00f6 00       		.byte	0
+ 296 00f7 00       		.byte	0
+ 297 00f8 07       		.uleb128 0x7
+ 298 00f9 B5000000 		.4byte	.LASF19
+ 299 00fd 01       		.byte	0x1
+ 300 00fe 15       		.byte	0x15
+ 301 00ff 00000000 		.4byte	.LFB33
+ 302 0103 16000000 		.4byte	.LFE33-.LFB33
+ 303 0107 01       		.uleb128 0x1
+ 304 0108 9C       		.byte	0x9c
+ 305 0109 38010000 		.4byte	0x138
+ 306 010d 0B       		.uleb128 0xb
+ 307 010e DD010000 		.4byte	.LASF35
+ 308 0112 01       		.byte	0x1
+ 309 0113 19       		.byte	0x19
+ 310 0114 81000000 		.4byte	0x81
+ 311 0118 00000000 		.4byte	.LLST0
+ 312 011c 08       		.uleb128 0x8
+ 313 011d 06000000 		.4byte	.LVL3
+ 314 0121 E9010000 		.4byte	0x1e9
+ 315 0125 08       		.uleb128 0x8
+ 316 0126 10000000 		.4byte	.LVL5
+ 317 012a F4010000 		.4byte	0x1f4
+ 318 012e 08       		.uleb128 0x8
+ 319 012f 14000000 		.4byte	.LVL6
+ 320 0133 FF010000 		.4byte	0x1ff
+ 321 0137 00       		.byte	0
+ 322 0138 0C       		.uleb128 0xc
+ 323 0139 01010000 		.4byte	.LASF36
+ 324 013d 01       		.byte	0x1
+ 325 013e 20       		.byte	0x20
+ 326 013f 68000000 		.4byte	0x68
+ 327 0143 00000000 		.4byte	.LFB34
+ 328 0147 34000000 		.4byte	.LFE34-.LFB34
+ 329 014b 01       		.uleb128 0x1
+ 330 014c 9C       		.byte	0x9c
+ 331 014d B6010000 		.4byte	0x1b6
+ 332 0151 08       		.uleb128 0x8
+ 333 0152 08000000 		.4byte	.LVL7
+ 334 0156 0A020000 		.4byte	0x20a
+ 335 015a 08       		.uleb128 0x8
+ 336 015b 0C000000 		.4byte	.LVL8
+ 337 015f 15020000 		.4byte	0x215
+ 338 0163 0D       		.uleb128 0xd
+ 339 0164 12000000 		.4byte	.LVL9
+ 340 0168 21020000 		.4byte	0x221
+ 341 016c 78010000 		.4byte	0x178
+ 342 0170 0A       		.uleb128 0xa
+ 343 0171 01       		.uleb128 0x1
+ 344 0172 50       		.byte	0x50
+ 345 0173 03       		.uleb128 0x3
+ 346 0174 0A       		.byte	0xa
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 8
+
+
+ 347 0175 8813     		.2byte	0x1388
+ 348 0177 00       		.byte	0
+ 349 0178 0D       		.uleb128 0xd
+ 350 0179 18000000 		.4byte	.LVL10
+ 351 017d 2D020000 		.4byte	0x22d
+ 352 0181 8B010000 		.4byte	0x18b
+ 353 0185 0A       		.uleb128 0xa
+ 354 0186 01       		.uleb128 0x1
+ 355 0187 50       		.byte	0x50
+ 356 0188 01       		.uleb128 0x1
+ 357 0189 31       		.byte	0x31
+ 358 018a 00       		.byte	0
+ 359 018b 0D       		.uleb128 0xd
+ 360 018c 1E000000 		.4byte	.LVL11
+ 361 0190 39020000 		.4byte	0x239
+ 362 0194 A2010000 		.4byte	0x1a2
+ 363 0198 0A       		.uleb128 0xa
+ 364 0199 01       		.uleb128 0x1
+ 365 019a 50       		.byte	0x50
+ 366 019b 05       		.uleb128 0x5
+ 367 019c 03       		.byte	0x3
+ 368 019d 00000000 		.4byte	Timer_ISR_Handler
+ 369 01a1 00       		.byte	0
+ 370 01a2 09       		.uleb128 0x9
+ 371 01a3 24000000 		.4byte	.LVL12
+ 372 01a7 44020000 		.4byte	0x244
+ 373 01ab 0A       		.uleb128 0xa
+ 374 01ac 01       		.uleb128 0x1
+ 375 01ad 50       		.byte	0x50
+ 376 01ae 05       		.uleb128 0x5
+ 377 01af 03       		.byte	0x3
+ 378 01b0 00000000 		.4byte	Button_Main_Handler
+ 379 01b4 00       		.byte	0
+ 380 01b5 00       		.byte	0
+ 381 01b6 0E       		.uleb128 0xe
+ 382 01b7 43000000 		.4byte	.LASF37
+ 383 01bb 01       		.byte	0x1
+ 384 01bc 06       		.byte	0x6
+ 385 01bd BC000000 		.4byte	0xbc
+ 386 01c1 05       		.uleb128 0x5
+ 387 01c2 03       		.byte	0x3
+ 388 01c3 00000000 		.4byte	isr_timer_count
+ 389 01c7 0F       		.uleb128 0xf
+ 390 01c8 59020000 		.4byte	.LASF20
+ 391 01cc 59020000 		.4byte	.LASF20
+ 392 01d0 05       		.byte	0x5
+ 393 01d1 32       		.byte	0x32
+ 394 01d2 0F       		.uleb128 0xf
+ 395 01d3 9E020000 		.4byte	.LASF21
+ 396 01d7 9E020000 		.4byte	.LASF21
+ 397 01db 05       		.byte	0x5
+ 398 01dc 33       		.byte	0x33
+ 399 01dd 10       		.uleb128 0x10
+ 400 01de 53000000 		.4byte	.LASF22
+ 401 01e2 53000000 		.4byte	.LASF22
+ 402 01e6 06       		.byte	0x6
+ 403 01e7 4701     		.2byte	0x147
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 9
+
+
+ 404 01e9 0F       		.uleb128 0xf
+ 405 01ea 66020000 		.4byte	.LASF23
+ 406 01ee 66020000 		.4byte	.LASF23
+ 407 01f2 07       		.byte	0x7
+ 408 01f3 32       		.byte	0x32
+ 409 01f4 0F       		.uleb128 0xf
+ 410 01f5 00000000 		.4byte	.LASF24
+ 411 01f9 00000000 		.4byte	.LASF24
+ 412 01fd 07       		.byte	0x7
+ 413 01fe 33       		.byte	0x33
+ 414 01ff 0F       		.uleb128 0xf
+ 415 0200 39010000 		.4byte	.LASF25
+ 416 0204 39010000 		.4byte	.LASF25
+ 417 0208 08       		.byte	0x8
+ 418 0209 39       		.byte	0x39
+ 419 020a 0F       		.uleb128 0xf
+ 420 020b 95000000 		.4byte	.LASF26
+ 421 020f 95000000 		.4byte	.LASF26
+ 422 0213 09       		.byte	0x9
+ 423 0214 23       		.byte	0x23
+ 424 0215 10       		.uleb128 0x10
+ 425 0216 06010000 		.4byte	.LASF27
+ 426 021a 06010000 		.4byte	.LASF27
+ 427 021e 06       		.byte	0x6
+ 428 021f 3201     		.2byte	0x132
+ 429 0221 10       		.uleb128 0x10
+ 430 0222 0F000000 		.4byte	.LASF28
+ 431 0226 0F000000 		.4byte	.LASF28
+ 432 022a 06       		.byte	0x6
+ 433 022b 5001     		.2byte	0x150
+ 434 022d 10       		.uleb128 0x10
+ 435 022e E1000000 		.4byte	.LASF29
+ 436 0232 E1000000 		.4byte	.LASF29
+ 437 0236 06       		.byte	0x6
+ 438 0237 4401     		.2byte	0x144
+ 439 0239 0F       		.uleb128 0xf
+ 440 023a 14010000 		.4byte	.LASF30
+ 441 023e 14010000 		.4byte	.LASF30
+ 442 0242 0A       		.byte	0xa
+ 443 0243 18       		.byte	0x18
+ 444 0244 0F       		.uleb128 0xf
+ 445 0245 26010000 		.4byte	.LASF31
+ 446 0249 26010000 		.4byte	.LASF31
+ 447 024d 0B       		.byte	0xb
+ 448 024e 18       		.byte	0x18
+ 449 024f 00       		.byte	0
+ 450              		.section	.debug_abbrev,"",%progbits
+ 451              	.Ldebug_abbrev0:
+ 452 0000 01       		.uleb128 0x1
+ 453 0001 11       		.uleb128 0x11
+ 454 0002 01       		.byte	0x1
+ 455 0003 25       		.uleb128 0x25
+ 456 0004 0E       		.uleb128 0xe
+ 457 0005 13       		.uleb128 0x13
+ 458 0006 0B       		.uleb128 0xb
+ 459 0007 03       		.uleb128 0x3
+ 460 0008 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 10
+
+
+ 461 0009 1B       		.uleb128 0x1b
+ 462 000a 0E       		.uleb128 0xe
+ 463 000b 55       		.uleb128 0x55
+ 464 000c 17       		.uleb128 0x17
+ 465 000d 11       		.uleb128 0x11
+ 466 000e 01       		.uleb128 0x1
+ 467 000f 10       		.uleb128 0x10
+ 468 0010 17       		.uleb128 0x17
+ 469 0011 00       		.byte	0
+ 470 0012 00       		.byte	0
+ 471 0013 02       		.uleb128 0x2
+ 472 0014 24       		.uleb128 0x24
+ 473 0015 00       		.byte	0
+ 474 0016 0B       		.uleb128 0xb
+ 475 0017 0B       		.uleb128 0xb
+ 476 0018 3E       		.uleb128 0x3e
+ 477 0019 0B       		.uleb128 0xb
+ 478 001a 03       		.uleb128 0x3
+ 479 001b 0E       		.uleb128 0xe
+ 480 001c 00       		.byte	0
+ 481 001d 00       		.byte	0
+ 482 001e 03       		.uleb128 0x3
+ 483 001f 16       		.uleb128 0x16
+ 484 0020 00       		.byte	0
+ 485 0021 03       		.uleb128 0x3
+ 486 0022 0E       		.uleb128 0xe
+ 487 0023 3A       		.uleb128 0x3a
+ 488 0024 0B       		.uleb128 0xb
+ 489 0025 3B       		.uleb128 0x3b
+ 490 0026 0B       		.uleb128 0xb
+ 491 0027 49       		.uleb128 0x49
+ 492 0028 13       		.uleb128 0x13
+ 493 0029 00       		.byte	0
+ 494 002a 00       		.byte	0
+ 495 002b 04       		.uleb128 0x4
+ 496 002c 24       		.uleb128 0x24
+ 497 002d 00       		.byte	0
+ 498 002e 0B       		.uleb128 0xb
+ 499 002f 0B       		.uleb128 0xb
+ 500 0030 3E       		.uleb128 0x3e
+ 501 0031 0B       		.uleb128 0xb
+ 502 0032 03       		.uleb128 0x3
+ 503 0033 08       		.uleb128 0x8
+ 504 0034 00       		.byte	0
+ 505 0035 00       		.byte	0
+ 506 0036 05       		.uleb128 0x5
+ 507 0037 16       		.uleb128 0x16
+ 508 0038 00       		.byte	0
+ 509 0039 03       		.uleb128 0x3
+ 510 003a 0E       		.uleb128 0xe
+ 511 003b 3A       		.uleb128 0x3a
+ 512 003c 0B       		.uleb128 0xb
+ 513 003d 3B       		.uleb128 0x3b
+ 514 003e 05       		.uleb128 0x5
+ 515 003f 49       		.uleb128 0x49
+ 516 0040 13       		.uleb128 0x13
+ 517 0041 00       		.byte	0
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 11
+
+
+ 518 0042 00       		.byte	0
+ 519 0043 06       		.uleb128 0x6
+ 520 0044 35       		.uleb128 0x35
+ 521 0045 00       		.byte	0
+ 522 0046 49       		.uleb128 0x49
+ 523 0047 13       		.uleb128 0x13
+ 524 0048 00       		.byte	0
+ 525 0049 00       		.byte	0
+ 526 004a 07       		.uleb128 0x7
+ 527 004b 2E       		.uleb128 0x2e
+ 528 004c 01       		.byte	0x1
+ 529 004d 3F       		.uleb128 0x3f
+ 530 004e 19       		.uleb128 0x19
+ 531 004f 03       		.uleb128 0x3
+ 532 0050 0E       		.uleb128 0xe
+ 533 0051 3A       		.uleb128 0x3a
+ 534 0052 0B       		.uleb128 0xb
+ 535 0053 3B       		.uleb128 0x3b
+ 536 0054 0B       		.uleb128 0xb
+ 537 0055 27       		.uleb128 0x27
+ 538 0056 19       		.uleb128 0x19
+ 539 0057 11       		.uleb128 0x11
+ 540 0058 01       		.uleb128 0x1
+ 541 0059 12       		.uleb128 0x12
+ 542 005a 06       		.uleb128 0x6
+ 543 005b 40       		.uleb128 0x40
+ 544 005c 18       		.uleb128 0x18
+ 545 005d 9742     		.uleb128 0x2117
+ 546 005f 19       		.uleb128 0x19
+ 547 0060 01       		.uleb128 0x1
+ 548 0061 13       		.uleb128 0x13
+ 549 0062 00       		.byte	0
+ 550 0063 00       		.byte	0
+ 551 0064 08       		.uleb128 0x8
+ 552 0065 898201   		.uleb128 0x4109
+ 553 0068 00       		.byte	0
+ 554 0069 11       		.uleb128 0x11
+ 555 006a 01       		.uleb128 0x1
+ 556 006b 31       		.uleb128 0x31
+ 557 006c 13       		.uleb128 0x13
+ 558 006d 00       		.byte	0
+ 559 006e 00       		.byte	0
+ 560 006f 09       		.uleb128 0x9
+ 561 0070 898201   		.uleb128 0x4109
+ 562 0073 01       		.byte	0x1
+ 563 0074 11       		.uleb128 0x11
+ 564 0075 01       		.uleb128 0x1
+ 565 0076 31       		.uleb128 0x31
+ 566 0077 13       		.uleb128 0x13
+ 567 0078 00       		.byte	0
+ 568 0079 00       		.byte	0
+ 569 007a 0A       		.uleb128 0xa
+ 570 007b 8A8201   		.uleb128 0x410a
+ 571 007e 00       		.byte	0
+ 572 007f 02       		.uleb128 0x2
+ 573 0080 18       		.uleb128 0x18
+ 574 0081 9142     		.uleb128 0x2111
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 12
+
+
+ 575 0083 18       		.uleb128 0x18
+ 576 0084 00       		.byte	0
+ 577 0085 00       		.byte	0
+ 578 0086 0B       		.uleb128 0xb
+ 579 0087 34       		.uleb128 0x34
+ 580 0088 00       		.byte	0
+ 581 0089 03       		.uleb128 0x3
+ 582 008a 0E       		.uleb128 0xe
+ 583 008b 3A       		.uleb128 0x3a
+ 584 008c 0B       		.uleb128 0xb
+ 585 008d 3B       		.uleb128 0x3b
+ 586 008e 0B       		.uleb128 0xb
+ 587 008f 49       		.uleb128 0x49
+ 588 0090 13       		.uleb128 0x13
+ 589 0091 02       		.uleb128 0x2
+ 590 0092 17       		.uleb128 0x17
+ 591 0093 00       		.byte	0
+ 592 0094 00       		.byte	0
+ 593 0095 0C       		.uleb128 0xc
+ 594 0096 2E       		.uleb128 0x2e
+ 595 0097 01       		.byte	0x1
+ 596 0098 3F       		.uleb128 0x3f
+ 597 0099 19       		.uleb128 0x19
+ 598 009a 03       		.uleb128 0x3
+ 599 009b 0E       		.uleb128 0xe
+ 600 009c 3A       		.uleb128 0x3a
+ 601 009d 0B       		.uleb128 0xb
+ 602 009e 3B       		.uleb128 0x3b
+ 603 009f 0B       		.uleb128 0xb
+ 604 00a0 27       		.uleb128 0x27
+ 605 00a1 19       		.uleb128 0x19
+ 606 00a2 49       		.uleb128 0x49
+ 607 00a3 13       		.uleb128 0x13
+ 608 00a4 11       		.uleb128 0x11
+ 609 00a5 01       		.uleb128 0x1
+ 610 00a6 12       		.uleb128 0x12
+ 611 00a7 06       		.uleb128 0x6
+ 612 00a8 40       		.uleb128 0x40
+ 613 00a9 18       		.uleb128 0x18
+ 614 00aa 9742     		.uleb128 0x2117
+ 615 00ac 19       		.uleb128 0x19
+ 616 00ad 01       		.uleb128 0x1
+ 617 00ae 13       		.uleb128 0x13
+ 618 00af 00       		.byte	0
+ 619 00b0 00       		.byte	0
+ 620 00b1 0D       		.uleb128 0xd
+ 621 00b2 898201   		.uleb128 0x4109
+ 622 00b5 01       		.byte	0x1
+ 623 00b6 11       		.uleb128 0x11
+ 624 00b7 01       		.uleb128 0x1
+ 625 00b8 31       		.uleb128 0x31
+ 626 00b9 13       		.uleb128 0x13
+ 627 00ba 01       		.uleb128 0x1
+ 628 00bb 13       		.uleb128 0x13
+ 629 00bc 00       		.byte	0
+ 630 00bd 00       		.byte	0
+ 631 00be 0E       		.uleb128 0xe
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 13
+
+
+ 632 00bf 34       		.uleb128 0x34
+ 633 00c0 00       		.byte	0
+ 634 00c1 03       		.uleb128 0x3
+ 635 00c2 0E       		.uleb128 0xe
+ 636 00c3 3A       		.uleb128 0x3a
+ 637 00c4 0B       		.uleb128 0xb
+ 638 00c5 3B       		.uleb128 0x3b
+ 639 00c6 0B       		.uleb128 0xb
+ 640 00c7 49       		.uleb128 0x49
+ 641 00c8 13       		.uleb128 0x13
+ 642 00c9 3F       		.uleb128 0x3f
+ 643 00ca 19       		.uleb128 0x19
+ 644 00cb 02       		.uleb128 0x2
+ 645 00cc 18       		.uleb128 0x18
+ 646 00cd 00       		.byte	0
+ 647 00ce 00       		.byte	0
+ 648 00cf 0F       		.uleb128 0xf
+ 649 00d0 2E       		.uleb128 0x2e
+ 650 00d1 00       		.byte	0
+ 651 00d2 3F       		.uleb128 0x3f
+ 652 00d3 19       		.uleb128 0x19
+ 653 00d4 3C       		.uleb128 0x3c
+ 654 00d5 19       		.uleb128 0x19
+ 655 00d6 6E       		.uleb128 0x6e
+ 656 00d7 0E       		.uleb128 0xe
+ 657 00d8 03       		.uleb128 0x3
+ 658 00d9 0E       		.uleb128 0xe
+ 659 00da 3A       		.uleb128 0x3a
+ 660 00db 0B       		.uleb128 0xb
+ 661 00dc 3B       		.uleb128 0x3b
+ 662 00dd 0B       		.uleb128 0xb
+ 663 00de 00       		.byte	0
+ 664 00df 00       		.byte	0
+ 665 00e0 10       		.uleb128 0x10
+ 666 00e1 2E       		.uleb128 0x2e
+ 667 00e2 00       		.byte	0
+ 668 00e3 3F       		.uleb128 0x3f
+ 669 00e4 19       		.uleb128 0x19
+ 670 00e5 3C       		.uleb128 0x3c
+ 671 00e6 19       		.uleb128 0x19
+ 672 00e7 6E       		.uleb128 0x6e
+ 673 00e8 0E       		.uleb128 0xe
+ 674 00e9 03       		.uleb128 0x3
+ 675 00ea 0E       		.uleb128 0xe
+ 676 00eb 3A       		.uleb128 0x3a
+ 677 00ec 0B       		.uleb128 0xb
+ 678 00ed 3B       		.uleb128 0x3b
+ 679 00ee 05       		.uleb128 0x5
+ 680 00ef 00       		.byte	0
+ 681 00f0 00       		.byte	0
+ 682 00f1 00       		.byte	0
+ 683              		.section	.debug_loc,"",%progbits
+ 684              	.Ldebug_loc0:
+ 685              	.LLST0:
+ 686 0000 06000000 		.4byte	.LVL3
+ 687 0004 0A000000 		.4byte	.LVL4
+ 688 0008 0100     		.2byte	0x1
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 14
+
+
+ 689 000a 50       		.byte	0x50
+ 690 000b 00000000 		.4byte	0
+ 691 000f 00000000 		.4byte	0
+ 692              		.section	.debug_aranges,"",%progbits
+ 693 0000 2C000000 		.4byte	0x2c
+ 694 0004 0200     		.2byte	0x2
+ 695 0006 00000000 		.4byte	.Ldebug_info0
+ 696 000a 04       		.byte	0x4
+ 697 000b 00       		.byte	0
+ 698 000c 0000     		.2byte	0
+ 699 000e 0000     		.2byte	0
+ 700 0010 00000000 		.4byte	.LFB32
+ 701 0014 24000000 		.4byte	.LFE32-.LFB32
+ 702 0018 00000000 		.4byte	.LFB33
+ 703 001c 16000000 		.4byte	.LFE33-.LFB33
+ 704 0020 00000000 		.4byte	.LFB34
+ 705 0024 34000000 		.4byte	.LFE34-.LFB34
+ 706 0028 00000000 		.4byte	0
+ 707 002c 00000000 		.4byte	0
+ 708              		.section	.debug_ranges,"",%progbits
+ 709              	.Ldebug_ranges0:
+ 710 0000 00000000 		.4byte	.LFB32
+ 711 0004 24000000 		.4byte	.LFE32
+ 712 0008 00000000 		.4byte	.LFB33
+ 713 000c 16000000 		.4byte	.LFE33
+ 714 0010 00000000 		.4byte	.LFB34
+ 715 0014 34000000 		.4byte	.LFE34
+ 716 0018 00000000 		.4byte	0
+ 717 001c 00000000 		.4byte	0
+ 718              		.section	.debug_line,"",%progbits
+ 719              	.Ldebug_line0:
+ 720 0000 E3010000 		.section	.debug_str,"MS",%progbits,1
+ 720      02009E01 
+ 720      00000201 
+ 720      FB0E0D00 
+ 720      01010101 
+ 721              	.LASF24:
+ 722 0000 50696E5F 		.ascii	"Pin_Main_Write\000"
+ 722      4D61696E 
+ 722      5F577269 
+ 722      746500
+ 723              	.LASF28:
+ 724 000f 54696D65 		.ascii	"Timer_1_WritePeriod\000"
+ 724      725F315F 
+ 724      57726974 
+ 724      65506572 
+ 724      696F6400 
+ 725              	.LASF3:
+ 726 0023 73686F72 		.ascii	"short unsigned int\000"
+ 726      7420756E 
+ 726      7369676E 
+ 726      65642069 
+ 726      6E7400
+ 727              	.LASF8:
+ 728 0036 756E7369 		.ascii	"unsigned int\000"
+ 728      676E6564 
+ 728      20696E74 
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 15
+
+
+ 728      00
+ 729              	.LASF37:
+ 730 0043 6973725F 		.ascii	"isr_timer_count\000"
+ 730      74696D65 
+ 730      725F636F 
+ 730      756E7400 
+ 731              	.LASF22:
+ 732 0053 54696D65 		.ascii	"Timer_1_ClearInterrupt\000"
+ 732      725F315F 
+ 732      436C6561 
+ 732      72496E74 
+ 732      65727275 
+ 733              	.LASF13:
+ 734 006a 666C6F61 		.ascii	"float\000"
+ 734      7400
+ 735              	.LASF7:
+ 736 0070 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 736      206C6F6E 
+ 736      6720756E 
+ 736      7369676E 
+ 736      65642069 
+ 737              	.LASF1:
+ 738 0087 756E7369 		.ascii	"unsigned char\000"
+ 738      676E6564 
+ 738      20636861 
+ 738      7200
+ 739              	.LASF26:
+ 740 0095 436C6F63 		.ascii	"Clock_1_Start\000"
+ 740      6B5F315F 
+ 740      53746172 
+ 740      7400
+ 741              	.LASF5:
+ 742 00a3 6C6F6E67 		.ascii	"long unsigned int\000"
+ 742      20756E73 
+ 742      69676E65 
+ 742      6420696E 
+ 742      7400
+ 743              	.LASF19:
+ 744 00b5 42757474 		.ascii	"Button_Main_Handler\000"
+ 744      6F6E5F4D 
+ 744      61696E5F 
+ 744      48616E64 
+ 744      6C657200 
+ 745              	.LASF11:
+ 746 00c9 75696E74 		.ascii	"uint8\000"
+ 746      3800
+ 747              	.LASF14:
+ 748 00cf 646F7562 		.ascii	"double\000"
+ 748      6C6500
+ 749              	.LASF9:
+ 750 00d6 5F5F7569 		.ascii	"__uint32_t\000"
+ 750      6E743332 
+ 750      5F7400
+ 751              	.LASF29:
+ 752 00e1 54696D65 		.ascii	"Timer_1_SetInterruptMode\000"
+ 752      725F315F 
+ 752      53657449 
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 16
+
+
+ 752      6E746572 
+ 752      72757074 
+ 753              	.LASF12:
+ 754 00fa 75696E74 		.ascii	"uint32\000"
+ 754      333200
+ 755              	.LASF36:
+ 756 0101 6D61696E 		.ascii	"main\000"
+ 756      00
+ 757              	.LASF27:
+ 758 0106 54696D65 		.ascii	"Timer_1_Start\000"
+ 758      725F315F 
+ 758      53746172 
+ 758      7400
+ 759              	.LASF30:
+ 760 0114 6973725F 		.ascii	"isr_Timer_StartEx\000"
+ 760      54696D65 
+ 760      725F5374 
+ 760      61727445 
+ 760      7800
+ 761              	.LASF31:
+ 762 0126 6973725F 		.ascii	"isr_Button_StartEx\000"
+ 762      42757474 
+ 762      6F6E5F53 
+ 762      74617274 
+ 762      457800
+ 763              	.LASF25:
+ 764 0139 42757474 		.ascii	"Button_ClearInterrupt\000"
+ 764      6F6E5F43 
+ 764      6C656172 
+ 764      496E7465 
+ 764      72727570 
+ 765              	.LASF32:
+ 766 014f 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 766      43313120 
+ 766      352E342E 
+ 766      31203230 
+ 766      31363036 
+ 767 0182 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 767      20726576 
+ 767      6973696F 
+ 767      6E203233 
+ 767      37373135 
+ 768 01b5 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 768      66756E63 
+ 768      74696F6E 
+ 768      2D736563 
+ 768      74696F6E 
+ 769              	.LASF35:
+ 770 01dd 63757272 		.ascii	"current_state\000"
+ 770      656E745F 
+ 770      73746174 
+ 770      6500
+ 771              	.LASF17:
+ 772 01eb 73697A65 		.ascii	"sizetype\000"
+ 772      74797065 
+ 772      00
+ 773              	.LASF34:
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 17
+
+
+ 774 01f4 433A5C55 		.ascii	"C:\\Users\\Vlad\\Documents\\PSoC Creator\\Lab1\\Des"
+ 774      73657273 
+ 774      5C566C61 
+ 774      645C446F 
+ 774      63756D65 
+ 775 0221 69676E30 		.ascii	"ign04_Copy_01.cydsn\000"
+ 775      345F436F 
+ 775      70795F30 
+ 775      312E6379 
+ 775      64736E00 
+ 776              	.LASF6:
+ 777 0235 6C6F6E67 		.ascii	"long long int\000"
+ 777      206C6F6E 
+ 777      6720696E 
+ 777      7400
+ 778              	.LASF33:
+ 779 0243 6D61696E 		.ascii	"main.c\000"
+ 779      2E6300
+ 780              	.LASF15:
+ 781 024a 63686172 		.ascii	"char\000"
+ 781      00
+ 782              	.LASF2:
+ 783 024f 73686F72 		.ascii	"short int\000"
+ 783      7420696E 
+ 783      7400
+ 784              	.LASF20:
+ 785 0259 50696E5F 		.ascii	"Pin_ISR_Read\000"
+ 785      4953525F 
+ 785      52656164 
+ 785      00
+ 786              	.LASF23:
+ 787 0266 50696E5F 		.ascii	"Pin_Main_Read\000"
+ 787      4D61696E 
+ 787      5F526561 
+ 787      6400
+ 788              	.LASF10:
+ 789 0274 75696E74 		.ascii	"uint32_t\000"
+ 789      33325F74 
+ 789      00
+ 790              	.LASF4:
+ 791 027d 6C6F6E67 		.ascii	"long int\000"
+ 791      20696E74 
+ 791      00
+ 792              	.LASF16:
+ 793 0286 6C6F6E67 		.ascii	"long double\000"
+ 793      20646F75 
+ 793      626C6500 
+ 794              	.LASF0:
+ 795 0292 7369676E 		.ascii	"signed char\000"
+ 795      65642063 
+ 795      68617200 
+ 796              	.LASF21:
+ 797 029e 50696E5F 		.ascii	"Pin_ISR_Write\000"
+ 797      4953525F 
+ 797      57726974 
+ 797      6500
+ 798              	.LASF18:
+ARM GAS  C:\Users\Vlad\AppData\Local\Temp\ccYT246c.s 			page 18
+
+
+ 799 02ac 54696D65 		.ascii	"Timer_ISR_Handler\000"
+ 799      725F4953 
+ 799      525F4861 
+ 799      6E646C65 
+ 799      7200
+ 800              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
